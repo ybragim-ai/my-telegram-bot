@@ -64,7 +64,7 @@ async def demo_pizza_bot(query):
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     await query.edit_message_text(
-        "🍕 *Добро пожаловать в виртуальную пиццерию!*\n\n"
+        "🍕 *Добро пожаловать в виртуальную пиццерии!*\n\n"
         "Это демо-версия бота для приема заказов. "
         "Такой же бот может работать для вашего бизнеса 24/7!",
         reply_markup=reply_markup,
@@ -247,12 +247,22 @@ async def back_to_main(query):
     )
 
 async def cancel(update: Update, context):
-    await update.message.reply_text('Диалог прерван. Напишите /start чтобы начать заново.')
+    await update.message.reply_text('Диалог прерван. Напишите /start чтобы начать зановo.')
     return ConversationHandler.END
 
 def main():
+    # Получаем токен из переменных окружения Heroku
+    BOT_TOKEN = os.environ.get('BOT_TOKEN')
+    
+    if not BOT_TOKEN:
+        print("ОШИБКА: Не найден BOT_TOKEN!")
+        print("Убедитесь, что добавили BOT_TOKEN в Config Vars в Heroku")
+        return
+    
+    print(f"Бот запускается с токеном: {BOT_TOKEN[:10]}...")
+    
     # Создаем приложение
-    application = Application.builder().token(os.getenv('BOT_TOKEN')).build()
+    application = Application.builder().token(BOT_TOKEN).build()
     
     # Обработчики
     application.add_handler(CommandHandler("start", start))
@@ -272,6 +282,7 @@ def main():
     application.add_handler(conv_handler)
     
     # Запускаем бота
+    print("Бот запущен и готов к работе!")
     application.run_polling()
 
 if __name__ == '__main__':
